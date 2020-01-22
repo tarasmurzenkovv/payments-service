@@ -1,0 +1,14 @@
+
+/.idea/
+**/*.iml
+**/target
+**/logs/
+*.backup
+
+/.classpath
+/.project
+/log.roo
+/.settings/
+
+.factorypath
+

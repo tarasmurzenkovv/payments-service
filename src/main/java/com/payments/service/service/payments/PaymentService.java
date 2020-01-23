@@ -1,7 +1,6 @@
 package com.payments.service.service.payments;
 
-import com.payments.service.controller.payments.PaymentRequest;
-import com.payments.service.controller.payments.PaymentResponse;
+import com.payments.service.model.Payment;
 import com.payments.service.dao.PaymentDao;
 
 import javax.inject.Inject;
@@ -14,8 +13,8 @@ public class PaymentService {
         this.paymentDao = paymentDao;
     }
 
-    public PaymentResponse credit(PaymentRequest paymentRequest) {
+    public Payment credit(Payment payment) {
         paymentDao.success();
-        return PaymentResponse.from(paymentRequest);
+        return Payment.from(payment);
     }
 }

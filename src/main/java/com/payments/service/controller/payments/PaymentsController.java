@@ -1,5 +1,6 @@
 package com.payments.service.controller.payments;
 
+import com.payments.service.model.Payment;
 import com.payments.service.service.json.GenericJsonSerializer;
 import com.payments.service.service.payments.PaymentService;
 
@@ -12,6 +13,6 @@ import static spark.Spark.put;
 public class PaymentsController {
     @Inject
     public PaymentsController(PaymentService paymentService) {
-        put(CREDIT_URI, (req, res) -> paymentService.credit(of(req, PaymentRequest.class)), GenericJsonSerializer::toJson);
+        put(CREDIT_URI, (req, res) -> paymentService.credit(of(req, Payment.class)), GenericJsonSerializer::toJson);
     }
 }

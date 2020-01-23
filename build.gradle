@@ -21,6 +21,7 @@ dependencies {
     compile 'com.fasterxml.jackson.core:jackson-databind:2.0.1'
     compile 'com.google.dagger:dagger:2.16'
     compile 'com.h2database:h2:1.4.200'
+    compile 'org.hsqldb:sqltool:2.5.0'
     compileOnly 'org.projectlombok:lombok:1.18.10'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.16'
     annotationProcessor 'org.projectlombok:lombok:1.18.10'

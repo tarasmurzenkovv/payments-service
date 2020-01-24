@@ -2,7 +2,7 @@ package com.payments.service.dao;
 
 import java.sql.*;
 
-public class DbDao {
+public class ConnectionManager {
     private static final String DB_URL = "jdbc:h2:~/test;;INIT=RUNSCRIPT FROM 'classpath:scripts/schema.sql'";
     private static final String USER = "sa";
     private static final String PASS = "";

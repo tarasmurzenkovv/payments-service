@@ -4,14 +4,14 @@ import javax.inject.Inject;
 
 public class PaymentDao {
 
-    private final DbDao dbDao;
+    private final ConnectionManager connectionManager;
 
     @Inject
-    public PaymentDao(DbDao dbDao) {
-        this.dbDao = dbDao;
+    public PaymentDao(ConnectionManager connectionManager) {
+        this.connectionManager = connectionManager;
     }
 
     public void success(){
-        System.out.println(dbDao != null);
+        System.out.println(connectionManager != null);
     }
 }

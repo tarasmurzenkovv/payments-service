@@ -9,26 +9,26 @@ import javax.inject.Provider;
   comments = "https://google.github.io/dagger"
 )
 public final class PaymentDao_Factory implements Factory<PaymentDao> {
-  private final Provider<DbDao> dbDaoProvider;
+  private final Provider<ConnectionManager> connectionManagerProvider;
 
-  public PaymentDao_Factory(Provider<DbDao> dbDaoProvider) {
-    this.dbDaoProvider = dbDaoProvider;
+  public PaymentDao_Factory(Provider<ConnectionManager> connectionManagerProvider) {
+    this.connectionManagerProvider = connectionManagerProvider;
   }
 
   @Override
   public PaymentDao get() {
-    return provideInstance(dbDaoProvider);
+    return provideInstance(connectionManagerProvider);
   }
 
-  public static PaymentDao provideInstance(Provider<DbDao> dbDaoProvider) {
-    return new PaymentDao(dbDaoProvider.get());
+  public static PaymentDao provideInstance(Provider<ConnectionManager> connectionManagerProvider) {
+    return new PaymentDao(connectionManagerProvider.get());
   }
 
-  public static PaymentDao_Factory create(Provider<DbDao> dbDaoProvider) {
-    return new PaymentDao_Factory(dbDaoProvider);
+  public static PaymentDao_Factory create(Provider<ConnectionManager> connectionManagerProvider) {
+    return new PaymentDao_Factory(connectionManagerProvider);
   }
 
-  public static PaymentDao newPaymentDao(DbDao dbDao) {
-    return new PaymentDao(dbDao);
+  public static PaymentDao newPaymentDao(ConnectionManager connectionManager) {
+    return new PaymentDao(connectionManager);
   }
 }

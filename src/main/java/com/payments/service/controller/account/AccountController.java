@@ -1,13 +1,13 @@
-package com.payments.service.controller.customer;
+package com.payments.service.controller.account;
 
 import com.payments.service.http.HttpStatusCode;
 import com.payments.service.http.RequestPipeline;
 import com.payments.service.http.ResponseType;
-import com.payments.service.model.Customer;
+import com.payments.service.model.Account;
 import com.payments.service.model.Response;
-import com.payments.service.model.exceptions.CustomerException;
+import com.payments.service.model.exceptions.AccountException;
+import com.payments.service.service.customer.AccountService;
 import com.payments.service.service.json.GenericJsonSerializer;
-import com.payments.service.service.customer.CustomerService;
 
 import javax.inject.Inject;
 
@@ -15,23 +15,23 @@ import static com.payments.service.controller.customer.CustomerPath.CUSTOMER_BY_
 import static com.payments.service.controller.customer.CustomerPath.CUSTOMER_URI;
 import static spark.Spark.*;
 
-public class CustomerController {
+public class AccountController {
 
     @Inject
-    public CustomerController(CustomerService customerService) {
+    public AccountController(AccountService service) {
         post(CUSTOMER_URI,
-                (req, res) -> RequestPipeline.<Customer, Customer>from(req).extractObject(Customer.class).process(customerService::create),
+                (req, res) -> RequestPipeline.<Account, Account>from(req).extractObject(Account.class).process(service::create),
                 GenericJsonSerializer::toJson);
 
         get(CUSTOMER_BY_ID_URI,
-                (req, res) -> RequestPipeline.<Integer, Customer>from(req).extract("id").parse(Integer::parseInt).process(customerService::find),
+                (req, res) -> RequestPipeline.<Integer, Account>from(req).extract("id").parse(Integer::parseInt).process(service::find),
                 GenericJsonSerializer::toJson);
 
         delete(CUSTOMER_BY_ID_URI,
-                (req, res) -> RequestPipeline.<Integer, Integer>from(req).extract("id").parse(Integer::parseInt).process(customerService::delete),
+                (req, res) -> RequestPipeline.<Integer, Integer>from(req).extract("id").parse(Integer::parseInt).process(service::delete),
                 GenericJsonSerializer::toJson);
 
-        exception(CustomerException.class, (e, request, response) -> {
+        exception(AccountException.class, (e, request, response) -> {
             response.status(HttpStatusCode.BAD_REQUEST);
             response.type(ResponseType.APPLICATION_JSON);
             response.body(GenericJsonSerializer.toJson(Response.of(e.getMessage())));

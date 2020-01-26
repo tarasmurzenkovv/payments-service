@@ -13,8 +13,7 @@ public class PaymentService {
         this.paymentDao = paymentDao;
     }
 
-    public Payment credit(Payment payment) {
-        paymentDao.success();
+    public Payment transfer(Payment payment) {
         return Payment.from(payment);
     }
 }

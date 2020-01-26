@@ -1,6 +1,6 @@
 package com.payments.service.modules.components;
 
-import com.payments.service.controller.payments.PaymentsController;
+import com.payments.service.controller.PaymentsController;
 import com.payments.service.modules.modules.DbConnectionModule;
 import dagger.Component;
 

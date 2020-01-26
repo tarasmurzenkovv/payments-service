@@ -1,4 +1,4 @@
-package com.payments.service.controller.customer;
+package com.payments.service.controller;
 
 import com.payments.service.http.HttpStatusCode;
 import com.payments.service.http.RequestPipeline;
@@ -11,11 +11,15 @@ import com.payments.service.service.customer.CustomerService;
 
 import javax.inject.Inject;
 
-import static com.payments.service.controller.customer.CustomerPath.CUSTOMER_BY_ID_URI;
-import static com.payments.service.controller.customer.CustomerPath.CUSTOMER_URI;
+import static com.payments.service.controller.CustomerController.CustomerPath.CUSTOMER_BY_ID_URI;
+import static com.payments.service.controller.CustomerController.CustomerPath.CUSTOMER_URI;
 import static spark.Spark.*;
 
 public class CustomerController {
+    public interface CustomerPath {
+        String CUSTOMER_URI = "/customer";
+        String CUSTOMER_BY_ID_URI = "/customer/:id";
+    }
 
     @Inject
     public CustomerController(CustomerService customerService) {

@@ -2,9 +2,9 @@ package com.payments.service.modules.modules;
 
 import com.payments.service.model.Account;
 import com.payments.service.model.Customer;
-import com.payments.service.service.customer.validation.AccountValidationService;
-import com.payments.service.service.customer.validation.CustomerValidationService;
-import com.payments.service.service.customer.validation.ValidationService;
+import com.payments.service.service.validation.AccountValidationService;
+import com.payments.service.service.validation.CustomerValidationService;
+import com.payments.service.service.validation.ValidationService;
 import dagger.Module;
 import dagger.Provides;
 

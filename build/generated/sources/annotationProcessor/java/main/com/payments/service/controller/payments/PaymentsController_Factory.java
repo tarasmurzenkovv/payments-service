@@ -1,5 +1,6 @@
 package com.payments.service.controller.payments;
 
+import com.payments.service.controller.PaymentsController;
 import com.payments.service.service.payments.PaymentService;
 import dagger.internal.Factory;
 import javax.annotation.Generated;

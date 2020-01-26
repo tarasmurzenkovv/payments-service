@@ -1,9 +1,12 @@
 package com.payments.service.dao;
 
+import lombok.SneakyThrows;
+
 import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.sql.*;
 
 public class PaymentDao {
-
     private final ConnectionManager connectionManager;
 
     @Inject
@@ -11,7 +14,44 @@ public class PaymentDao {
         this.connectionManager = connectionManager;
     }
 
-    public void success(){
-        System.out.println(connectionManager != null);
+    public void transfer(int accountIdFrom, int accountIdTo, BigDecimal amount) {
+        try (Connection connection = connectionManager.getConnection();
+             PreparedStatement lockAccountsStatement = PaymentDao.makeLockPreparedStatement(connection, accountIdTo, accountIdFrom);
+             PreparedStatement debitStatement = PaymentDao.debitAccount(connection, accountIdTo, amount);
+             PreparedStatement creditStatement = PaymentDao.creditAccount(connection, accountIdTo, amount)) {
+            connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+            lockAccountsStatement.executeUpdate();
+            debitStatement.executeUpdate();
+            creditStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @SneakyThrows
+    private static PreparedStatement makeLockPreparedStatement(Connection connection, int firstAccountId, int secondAccountId) {
+        String lockAccounts = "SELECT id, amount FROM account WHERE id in (?, ?) FOR UPDATE ";
+        PreparedStatement lockAccountsStatement = connection.prepareStatement(lockAccounts);
+        lockAccountsStatement.setInt(1, firstAccountId);
+        lockAccountsStatement.setInt(2, secondAccountId);
+        return lockAccountsStatement;
+    }
+
+    @SneakyThrows
+    private static PreparedStatement debitAccount(Connection connection, int accountId, BigDecimal amount) {
+        String debitAccount = "UPDATE amount FROM account SET amount = amount + (?) WHERE id = (?)";
+        PreparedStatement debitStatement = connection.prepareStatement(debitAccount);
+        debitStatement.setBigDecimal(1, amount);
+        debitStatement.setInt(2, accountId);
+        return debitStatement;
+    }
+
+    @SneakyThrows
+    private static PreparedStatement creditAccount(Connection connection, int accountId, BigDecimal amount) {
+        String creditAccount = "UPDATE amount FROM account SET amount = amount - (?) WHERE id = (?)";
+        PreparedStatement creditStatement = connection.prepareStatement(creditAccount);
+        creditStatement.setBigDecimal(1, amount);
+        creditStatement.setInt(2, accountId);
+        return creditStatement;
     }
 }

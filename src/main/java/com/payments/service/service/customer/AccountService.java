@@ -3,7 +3,7 @@ package com.payments.service.service.customer;
 import com.payments.service.dao.AccountDao;
 import com.payments.service.model.Account;
 import com.payments.service.model.exceptions.AccountException;
-import com.payments.service.service.customer.validation.ValidationService;
+import com.payments.service.service.validation.ValidationService;
 
 import javax.inject.Inject;
 import java.math.BigDecimal;

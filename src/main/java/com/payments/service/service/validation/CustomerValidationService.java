@@ -1,4 +1,4 @@
-package com.payments.service.service.customer.validation;
+package com.payments.service.service.validation;
 
 import com.payments.service.model.Customer;
 import com.payments.service.model.exceptions.CustomerException;

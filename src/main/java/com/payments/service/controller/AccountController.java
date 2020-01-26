@@ -1,4 +1,4 @@
-package com.payments.service.controller.account;
+package com.payments.service.controller;
 
 import com.payments.service.http.HttpStatusCode;
 import com.payments.service.http.RequestPipeline;
@@ -11,23 +11,26 @@ import com.payments.service.service.json.GenericJsonSerializer;
 
 import javax.inject.Inject;
 
-import static com.payments.service.controller.customer.CustomerPath.CUSTOMER_BY_ID_URI;
-import static com.payments.service.controller.customer.CustomerPath.CUSTOMER_URI;
+import static com.payments.service.controller.AccountController.AccountPath.ACCOUNT_BY_ID;
 import static spark.Spark.*;
 
 public class AccountController {
+    public interface AccountPath {
+        String ACCOUNT = "/account";
+        String ACCOUNT_BY_ID = "/account/:id";
+    }
 
     @Inject
     public AccountController(AccountService service) {
-        post(CUSTOMER_URI,
+        post(AccountPath.ACCOUNT,
                 (req, res) -> RequestPipeline.<Account, Account>from(req).extractObject(Account.class).process(service::create),
                 GenericJsonSerializer::toJson);
 
-        get(CUSTOMER_BY_ID_URI,
+        get(ACCOUNT_BY_ID,
                 (req, res) -> RequestPipeline.<Integer, Account>from(req).extract("id").parse(Integer::parseInt).process(service::find),
                 GenericJsonSerializer::toJson);
 
-        delete(CUSTOMER_BY_ID_URI,
+        delete(ACCOUNT_BY_ID,
                 (req, res) -> RequestPipeline.<Integer, Integer>from(req).extract("id").parse(Integer::parseInt).process(service::delete),
                 GenericJsonSerializer::toJson);
 

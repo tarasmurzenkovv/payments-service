@@ -15,10 +15,11 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class Payment {
     private int accountTo;
+    private int accountFrom;
     @JsonSerialize(using = MoneySerializer.class)
     private BigDecimal amount;
 
     public static Payment from(Payment payment) {
-        return new Payment(payment.accountTo, payment.amount);
+        return new Payment(payment.accountTo, payment.accountFrom, payment.amount);
     }
 }

@@ -3,7 +3,7 @@ package com.payments.service.service.customer;
 import com.payments.service.dao.CustomerDao;
 import com.payments.service.model.Customer;
 import com.payments.service.model.exceptions.CustomerException;
-import com.payments.service.service.customer.validation.ValidationService;
+import com.payments.service.service.validation.ValidationService;
 
 import javax.inject.Inject;
 

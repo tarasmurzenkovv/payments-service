@@ -13,6 +13,11 @@ public class GenericJsonSerializer {
     }
 
     @SneakyThrows
+    public static <T> T of(String json, Class<T> instanceClass) {
+        return OBJECT_MAPPER.readValue(json, instanceClass);
+    }
+
+    @SneakyThrows
     public static <T> String toJson(T instance) {
         return OBJECT_MAPPER.writeValueAsString(instance);
     }

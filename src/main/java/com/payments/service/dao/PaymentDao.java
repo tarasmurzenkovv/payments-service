@@ -19,8 +19,9 @@ public class PaymentDao {
              PreparedStatement lockAccountsStatement = PaymentDao.makeLockPreparedStatement(connection, accountIdTo, accountIdFrom);
              PreparedStatement debitStatement = PaymentDao.debitAccount(connection, accountIdTo, amount);
              PreparedStatement creditStatement = PaymentDao.creditAccount(connection, accountIdTo, amount)) {
-            connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
-            lockAccountsStatement.executeUpdate();
+            connection.setAutoCommit(true);
+            //connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+            //lockAccountsStatement.execute();
             debitStatement.executeUpdate();
             creditStatement.executeUpdate();
         } catch (SQLException e) {
@@ -39,7 +40,7 @@ public class PaymentDao {
 
     @SneakyThrows
     private static PreparedStatement debitAccount(Connection connection, int accountId, BigDecimal amount) {
-        String debitAccount = "UPDATE amount FROM account SET amount = amount + (?) WHERE id = (?)";
+        String debitAccount = "UPDATE account SET amount = amount + (?) WHERE id = (?)";
         PreparedStatement debitStatement = connection.prepareStatement(debitAccount);
         debitStatement.setBigDecimal(1, amount);
         debitStatement.setInt(2, accountId);
@@ -48,7 +49,7 @@ public class PaymentDao {
 
     @SneakyThrows
     private static PreparedStatement creditAccount(Connection connection, int accountId, BigDecimal amount) {
-        String creditAccount = "UPDATE amount FROM account SET amount = amount - (?) WHERE id = (?)";
+        String creditAccount = "UPDATE account SET amount = ? WHERE id = ?";
         PreparedStatement creditStatement = connection.prepareStatement(creditAccount);
         creditStatement.setBigDecimal(1, amount);
         creditStatement.setInt(2, accountId);

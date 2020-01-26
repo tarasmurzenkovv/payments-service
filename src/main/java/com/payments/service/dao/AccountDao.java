@@ -16,15 +16,15 @@ public class AccountDao {
     }
 
     public int create(int customerId, BigDecimal amount) {
-        int accountId = 0;
-        String createCustomerSql = "INSERT INTO account (customer, amount) VALUES(?, ?)";
-        try (Connection connection = connectionManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(createCustomerSql, Statement.RETURN_GENERATED_KEYS)) {
+        var accountId = 0;
+        var createCustomerSql = "INSERT INTO account (customer, amount) VALUES(?, ?)";
+        try (var connection = connectionManager.getConnection();
+             var statement = connection.prepareStatement(createCustomerSql, Statement.RETURN_GENERATED_KEYS)) {
             statement.setInt(1, customerId);
-            statement.setBigDecimal(1, amount);
-            int updatedRows = statement.executeUpdate();
+            statement.setBigDecimal(2, amount);
+            var updatedRows = statement.executeUpdate();
             if (updatedRows > 0) {
-                try (ResultSet resultSet = statement.getGeneratedKeys()) {
+                try (var resultSet = statement.getGeneratedKeys()) {
                     if (resultSet.next()) {
                         return resultSet.getInt(1);
                     }
@@ -37,14 +37,14 @@ public class AccountDao {
     }
 
     public Optional<Account> findById(int id) {
-        final String createCustomerSql = "SELECT id, customer, amount from account WHERE account.id = ? ";
-        try (Connection connection = connectionManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(createCustomerSql)) {
+        final var createCustomerSql = "SELECT id, customer, amount from account WHERE account.id = ? ";
+        try (var connection = connectionManager.getConnection();
+             var statement = connection.prepareStatement(createCustomerSql)) {
             statement.setInt(1, id);
-            try (ResultSet resultSet = statement.executeQuery()) {
+            try (var resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    int customerId = resultSet.getInt("customer");
-                    BigDecimal amount = resultSet.getBigDecimal("amount");
+                    var customerId = resultSet.getInt("customer");
+                    var amount = resultSet.getBigDecimal("amount");
                     return Optional.of(Account.of(id, customerId, amount));
                 }
             }
@@ -55,9 +55,9 @@ public class AccountDao {
     }
 
     public int deleteById(int id) {
-        final String createCustomerSql = "DELETE FROM account WHERE account.id = ? ";
-        try (Connection connection = connectionManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(createCustomerSql)) {
+        final var createCustomerSql = "DELETE FROM account WHERE account.id = ? ";
+        try (var connection = connectionManager.getConnection();
+             var statement = connection.prepareStatement(createCustomerSql)) {
             statement.setInt(1, id);
             statement.executeUpdate();
             return id;

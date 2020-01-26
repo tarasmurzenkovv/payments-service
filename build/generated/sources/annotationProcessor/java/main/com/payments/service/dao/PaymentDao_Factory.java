@@ -1,7 +1,7 @@
 package com.payments.service.dao;
 
 import dagger.internal.Factory;
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 import javax.inject.Provider;
 
 @Generated(

@@ -15,14 +15,14 @@ public class CustomerDao {
     }
 
     public int createCustomer(String customerName) {
-        int customerId = 0;
-        String createCustomerSql = "INSERT INTO customer (name) VALUES(?)";
-        try (Connection connection = connectionManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(createCustomerSql, Statement.RETURN_GENERATED_KEYS)) {
+        var customerId = 0;
+        var createCustomerSql = "INSERT INTO customer (name) VALUES(?)";
+        try (var connection = connectionManager.getConnection();
+             var statement = connection.prepareStatement(createCustomerSql, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, customerName);
             int updatedRows = statement.executeUpdate();
             if (updatedRows > 0) {
-                try (ResultSet resultSet = statement.getGeneratedKeys()) {
+                try (var resultSet = statement.getGeneratedKeys()) {
                     if (resultSet.next()) {
                         customerId = resultSet.getInt(1);
                     }
@@ -35,13 +35,13 @@ public class CustomerDao {
     }
 
     public Optional<Customer> findCustomerById(int customerId) {
-        final String createCustomerSql = "SELECT id, name from customer WHERE customer.id = ? ";
-        try (Connection connection = connectionManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(createCustomerSql)) {
+        final var createCustomerSql = "SELECT id, name from customer WHERE customer.id = ? ";
+        try (var connection = connectionManager.getConnection();
+             var statement = connection.prepareStatement(createCustomerSql)) {
             statement.setInt(1, customerId);
-            try (ResultSet resultSet = statement.executeQuery()) {
+            try (var resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    String customerName = resultSet.getString("name");
+                    var customerName = resultSet.getString("name");
                     return Optional.of(Customer.of(customerId, customerName));
                 }
             }
@@ -52,9 +52,9 @@ public class CustomerDao {
     }
 
     public int deleteById(int id) {
-        final String createCustomerSql = "DELETE FROM customer WHERE customer.id = ? ";
-        try (Connection connection = connectionManager.getConnection();
-             PreparedStatement statement = connection.prepareStatement(createCustomerSql)) {
+        final var createCustomerSql = "DELETE FROM customer WHERE customer.id = ? ";
+        try (var connection = connectionManager.getConnection();
+             var statement = connection.prepareStatement(createCustomerSql)) {
             statement.setInt(1, id);
             statement.executeUpdate();
             return id;

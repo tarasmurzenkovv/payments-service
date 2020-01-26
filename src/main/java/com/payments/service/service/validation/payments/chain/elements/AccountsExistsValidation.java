@@ -12,7 +12,6 @@ import java.util.stream.Stream;
 public class AccountsExistsValidation implements Consumer<Payment> {
     private final AccountDao accountDao;
 
-    @Inject
     public AccountsExistsValidation(AccountDao accountDao) {
         this.accountDao = accountDao;
     }

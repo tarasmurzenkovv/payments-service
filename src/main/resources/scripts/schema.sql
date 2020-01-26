@@ -8,7 +8,7 @@ create table if not exists account
 (
     id       integer auto_increment primary key,
     customer integer,
-    amount   double,
+    amount   decimal,
     foreign key (customer) references customer (id)
 );
 

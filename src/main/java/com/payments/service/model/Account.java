@@ -16,7 +16,7 @@ public class Account {
     @JsonSerialize(using = MoneySerializer.class)
     private BigDecimal amount;
 
-    public static Account of(int accountId, int customerId, BigDecimal amount) {
+    public static Account of(Integer accountId, int customerId, BigDecimal amount) {
         return new Account(accountId, customerId, amount);
     }
 }

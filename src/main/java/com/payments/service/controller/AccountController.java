@@ -6,10 +6,12 @@ import com.payments.service.http.ResponseType;
 import com.payments.service.model.Account;
 import com.payments.service.model.Response;
 import com.payments.service.model.exceptions.AccountException;
-import com.payments.service.service.customer.AccountService;
+import com.payments.service.service.AccountService;
 import com.payments.service.service.json.GenericJsonSerializer;
 
 import javax.inject.Inject;
+
+import java.util.Optional;
 
 import static com.payments.service.controller.AccountController.AccountPath.ACCOUNT_BY_ID;
 import static spark.Spark.*;
@@ -22,8 +24,10 @@ public class AccountController {
 
     @Inject
     public AccountController(AccountService service) {
-        post(AccountPath.ACCOUNT,
-                (req, res) -> RequestPipeline.<Account, Account>from(req).extractObject(Account.class).process(service::create),
+        post(AccountPath.ACCOUNT, (req, res) -> {
+                    res.status(HttpStatusCode.CREATED);
+                    return RequestPipeline.<Account, Account>from(req).extractObject(Account.class).process(service::create);
+                },
                 GenericJsonSerializer::toJson);
 
         get(ACCOUNT_BY_ID,
@@ -35,7 +39,7 @@ public class AccountController {
                 GenericJsonSerializer::toJson);
 
         exception(AccountException.class, (e, request, response) -> {
-            response.status(HttpStatusCode.BAD_REQUEST);
+            response.status(Optional.ofNullable(e.getHttpStatusCode()).orElse(HttpStatusCode.BAD_REQUEST));
             response.type(ResponseType.APPLICATION_JSON);
             response.body(GenericJsonSerializer.toJson(Response.of(e.getMessage())));
         });

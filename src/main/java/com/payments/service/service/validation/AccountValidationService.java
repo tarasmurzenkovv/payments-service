@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 public class AccountValidationService implements ValidationService<Account> {
     public void validate(Account account) {
-        BigDecimal amount = account.getAmount();
+        var amount = account.getAmount();
         if (amount == null) {
             throw new AccountException("Account cannot have null amount");
         }

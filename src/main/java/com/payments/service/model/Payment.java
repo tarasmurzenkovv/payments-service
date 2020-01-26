@@ -19,6 +19,10 @@ public class Payment {
     @JsonSerialize(using = MoneySerializer.class)
     private BigDecimal amount;
 
+    public static Payment of(int to, int from, BigDecimal amount) {
+        return new Payment(to, from, amount);
+    }
+
     public static Payment from(Payment payment) {
         return new Payment(payment.accountTo, payment.accountFrom, payment.amount);
     }

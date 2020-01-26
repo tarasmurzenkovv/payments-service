@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import lombok.SneakyThrows;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class MoneySerializer extends JsonSerializer<BigDecimal> {
     @Override

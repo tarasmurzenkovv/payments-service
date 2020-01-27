@@ -9,6 +9,8 @@ import javax.inject.Inject;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+import static java.lang.String.format;
+
 public class AccountsExistsValidation implements Consumer<Payment> {
     private final AccountDao accountDao;
 
@@ -24,7 +26,7 @@ public class AccountsExistsValidation implements Consumer<Payment> {
                 .findAny()
                 .map(Pair::getLeft)
                 .ifPresent(accountId -> {
-                    throw new PaymentException(String.format("Cannot locate registered account with id '%d'", accountId));
+                    throw new PaymentException(format("Cannot locate registered account with id '%d'", accountId));
                 });
     }
 }

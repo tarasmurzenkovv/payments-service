@@ -7,6 +7,9 @@ import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.sql.*;
 
+import static java.sql.ResultSet.CONCUR_UPDATABLE;
+import static java.sql.ResultSet.TYPE_SCROLL_SENSITIVE;
+
 @Slf4j
 public class PaymentDao {
     private final ConnectionManager connectionManager;
@@ -17,9 +20,9 @@ public class PaymentDao {
     }
 
     public void transfer(int accountIdFrom, int accountIdTo, BigDecimal amount) {
-        try (Connection connection = connectionManager.getConnection();
-             ResultSet lockResultSet = PaymentDao.makeLockPreparedStatement(connection, accountIdTo);
-             ResultSet lockResultSetCredit = PaymentDao.makeLockPreparedStatement(connection, accountIdFrom)) {
+        try (var connection = connectionManager.getConnection(Connection.TRANSACTION_SERIALIZABLE);
+             var lockResultSet = makeLockPreparedStatement(connection, accountIdTo);
+             var lockResultSetCredit = makeLockPreparedStatement(connection, accountIdFrom)) {
             debitAmount(amount, lockResultSet);
             creditAccount(amount, lockResultSetCredit);
         } catch (SQLException e) {
@@ -28,14 +31,17 @@ public class PaymentDao {
         }
     }
 
-    private static void debitAmount(BigDecimal amount, ResultSet lockResultSet) throws SQLException {
-        lockResultSet.next();
-        BigDecimal bigDecimal = lockResultSet.getBigDecimal(2);
-        lockResultSet.updateBigDecimal(2, bigDecimal.subtract(amount));
-        lockResultSet.updateRow();
+    @SneakyThrows
+    private static void debitAmount(BigDecimal amount, ResultSet lockResultSet) {
+        if (lockResultSet.next()) {
+            BigDecimal bigDecimal = lockResultSet.getBigDecimal(2);
+            lockResultSet.updateBigDecimal(2, bigDecimal.subtract(amount));
+            lockResultSet.updateRow();
+        }
     }
 
-    private static void creditAccount(BigDecimal amount, ResultSet lockResultSet) throws SQLException {
+    @SneakyThrows
+    private static void creditAccount(BigDecimal amount, ResultSet lockResultSet) {
         if (lockResultSet.next()) {
             BigDecimal bigDecimal = lockResultSet.getBigDecimal(2);
             lockResultSet.updateBigDecimal(2, bigDecimal.add(amount));
@@ -45,9 +51,9 @@ public class PaymentDao {
 
     @SneakyThrows
     private static ResultSet makeLockPreparedStatement(Connection connection, int accountId) {
-        String lockAccount = "SELECT id, amount FROM payments.account WHERE id = %d FOR UPDATE ";
-        Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
-                ResultSet.CONCUR_UPDATABLE);
-        return statement.executeQuery(String.format(lockAccount, accountId));
+        var lockAccount = "SELECT id, amount FROM payments.account WHERE id = ? FOR UPDATE ";
+        var statement = connection.prepareStatement(lockAccount, TYPE_SCROLL_SENSITIVE, CONCUR_UPDATABLE);
+        statement.setInt(1, accountId);
+        return statement.executeQuery();
     }
 }

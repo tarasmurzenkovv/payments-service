@@ -7,6 +7,8 @@ import com.payments.service.model.exceptions.PaymentException;
 import java.math.BigDecimal;
 import java.util.function.Consumer;
 
+import static java.lang.String.format;
+
 public class SufficientFundsValidation implements Consumer<Payment> {
     private final AccountDao accountDao;
 
@@ -22,7 +24,7 @@ public class SufficientFundsValidation implements Consumer<Payment> {
                 .ifPresent(account -> {
                     if (account.getAmount().compareTo(amount) <= 0) {
                         throw new PaymentException(
-                                String.format("Cannot credit amount '%s' from account '%s'. Insufficient funds.", amount, accountIdFrom));
+                                format("Cannot credit amount '%s' from account '%s'. Insufficient funds.", amount, accountIdFrom));
                     }
                 });
 

@@ -3,7 +3,9 @@ package com.payments.service.http;
 import com.payments.service.service.json.GenericJsonSerializer;
 import com.payments.service.utils.StringUtils;
 import spark.Request;
+import spark.Response;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class RequestPipeline<T, U> {
@@ -35,6 +37,11 @@ public class RequestPipeline<T, U> {
 
     public RequestPipeline<T, U> parse(Function<String, T> parser) {
         parsedValue = parser.apply(rawStringValue);
+        return this;
+    }
+
+    public  RequestPipeline<T, U> responseStatus(Response response, Consumer<Response> responseConsumer) {
+        responseConsumer.accept(response);
         return this;
     }
 

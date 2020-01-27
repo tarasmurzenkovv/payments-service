@@ -2,8 +2,10 @@ package com.payments.service.service.json;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
 import spark.Request;
 
+@UtilityClass
 public class GenericJsonSerializer {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 

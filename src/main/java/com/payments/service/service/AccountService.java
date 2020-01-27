@@ -7,6 +7,9 @@ import com.payments.service.service.validation.ValidationService;
 
 import javax.inject.Inject;
 
+import static com.payments.service.model.Account.of;
+import static java.lang.String.format;
+
 public class AccountService {
     private final AccountDao accountDao;
     private final ValidationService<Account> accountValidationService;
@@ -22,12 +25,12 @@ public class AccountService {
         var customerId = account.getCustomerId();
         var amount = account.getAmount();
         var accountId = accountDao.create(customerId, amount);
-        return Account.of(accountId, customerId, amount);
+        return of(accountId, customerId, amount);
     }
 
     public Account find(int id) {
         return accountDao.findById(id)
-                .orElseThrow(() -> new AccountException(String.format("Cannot find account with id '%s'", id)));
+                .orElseThrow(() -> new AccountException(format("Cannot find account with id '%s'", id)));
     }
 
     public int delete(int id) {

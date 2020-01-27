@@ -1,3 +1,7 @@
+create schema if not exists payments;
+
+set schema payments;
+
 create table if not exists customer
 (
     id   integer auto_increment primary key,

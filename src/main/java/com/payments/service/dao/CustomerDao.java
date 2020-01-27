@@ -16,7 +16,7 @@ public class CustomerDao {
 
     public int createCustomer(String customerName) {
         var customerId = 0;
-        var createCustomerSql = "INSERT INTO customer (name) VALUES(?)";
+        var createCustomerSql = "INSERT INTO payments.customer (name) VALUES(?)";
         try (var connection = connectionManager.getConnection();
              var statement = connection.prepareStatement(createCustomerSql, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, customerName);
@@ -35,7 +35,7 @@ public class CustomerDao {
     }
 
     public Optional<Customer> findCustomerById(int customerId) {
-        final var createCustomerSql = "SELECT id, name from customer WHERE customer.id = ? ";
+        final var createCustomerSql = "SELECT id, name FROM payments.customer WHERE customer.id = ? ";
         try (var connection = connectionManager.getConnection();
              var statement = connection.prepareStatement(createCustomerSql)) {
             statement.setInt(1, customerId);
@@ -52,7 +52,7 @@ public class CustomerDao {
     }
 
     public int deleteById(int id) {
-        final var createCustomerSql = "DELETE FROM customer WHERE customer.id = ? ";
+        final var createCustomerSql = "DELETE FROM payments.customer WHERE customer.id = ? ";
         try (var connection = connectionManager.getConnection();
              var statement = connection.prepareStatement(createCustomerSql)) {
             statement.setInt(1, id);

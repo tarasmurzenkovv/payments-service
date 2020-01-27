@@ -6,20 +6,19 @@ import com.payments.service.model.exceptions.AccountException;
 import com.payments.service.service.validation.ValidationService;
 
 import javax.inject.Inject;
-import java.math.BigDecimal;
 
 public class AccountService {
     private final AccountDao accountDao;
-    private final ValidationService<Account> validationService;
+    private final ValidationService<Account> accountValidationService;
 
     @Inject
     public AccountService(AccountDao accountDao, ValidationService<Account> validationService) {
         this.accountDao = accountDao;
-        this.validationService = validationService;
+        this.accountValidationService = validationService;
     }
 
     public Account create(Account account) {
-        validationService.validate(account);
+        accountValidationService.validate(account);
         var customerId = account.getCustomerId();
         var amount = account.getAmount();
         var accountId = accountDao.create(customerId, amount);

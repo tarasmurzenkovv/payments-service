@@ -29,7 +29,7 @@ public class PaymentControllerIT extends BaseIT {
         var firstAccountId = createAccount(firstCustomerIdFrom, valueOf(100));
         var secondCustomerIdTo = createCustomer("name2");
         var secondAccountId = createAccount(secondCustomerIdTo, valueOf(500));
-        var payment = Payment.of(secondCustomerIdTo, firstCustomerIdFrom, valueOf(50));
+        var payment = Payment.of(firstAccountId, secondAccountId, valueOf(50));
         var createAccountRequestBody = create(JSON, toJson(payment));
         var paymentRequest = new Request.Builder().url(TEST_HOST + PAYMENT)
                 .put(createAccountRequestBody)
@@ -65,6 +65,7 @@ public class PaymentControllerIT extends BaseIT {
                 .post(body)
                 .build();
         var response = okHttpClient.newCall(createCustomerRequest).execute();
+        Assert.assertEquals(response.code(), HttpStatusCode.CREATED);
         return GenericJsonSerializer.of(response.body().string(), Customer.class).getId();
     }
 }

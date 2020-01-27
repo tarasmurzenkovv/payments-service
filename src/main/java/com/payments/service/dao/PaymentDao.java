@@ -1,11 +1,13 @@
 package com.payments.service.dao;
 
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.sql.*;
 
+@Slf4j
 public class PaymentDao {
     private final ConnectionManager connectionManager;
 
@@ -16,43 +18,36 @@ public class PaymentDao {
 
     public void transfer(int accountIdFrom, int accountIdTo, BigDecimal amount) {
         try (Connection connection = connectionManager.getConnection();
-             PreparedStatement lockAccountsStatement = PaymentDao.makeLockPreparedStatement(connection, accountIdTo, accountIdFrom);
-             PreparedStatement debitStatement = PaymentDao.debitAccount(connection, accountIdTo, amount);
-             PreparedStatement creditStatement = PaymentDao.creditAccount(connection, accountIdTo, amount)) {
-            connection.setAutoCommit(true);
-            //connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
-            //lockAccountsStatement.execute();
-            debitStatement.executeUpdate();
-            creditStatement.executeUpdate();
+             ResultSet lockResultSet = PaymentDao.makeLockPreparedStatement(connection, accountIdTo);
+             ResultSet lockResultSetCredit = PaymentDao.makeLockPreparedStatement(connection, accountIdFrom)) {
+            debitAmount(amount, lockResultSet);
+            creditAccount(amount, lockResultSetCredit);
         } catch (SQLException e) {
+            log.error("Got error during payment. Exception message is '{}'", e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }
 
-    @SneakyThrows
-    private static PreparedStatement makeLockPreparedStatement(Connection connection, int firstAccountId, int secondAccountId) {
-        String lockAccounts = "SELECT id, amount FROM account WHERE id in (?, ?) FOR UPDATE ";
-        PreparedStatement lockAccountsStatement = connection.prepareStatement(lockAccounts);
-        lockAccountsStatement.setInt(1, firstAccountId);
-        lockAccountsStatement.setInt(2, secondAccountId);
-        return lockAccountsStatement;
+    private static void debitAmount(BigDecimal amount, ResultSet lockResultSet) throws SQLException {
+        lockResultSet.next();
+        BigDecimal bigDecimal = lockResultSet.getBigDecimal(2);
+        lockResultSet.updateBigDecimal(2, bigDecimal.subtract(amount));
+        lockResultSet.updateRow();
+    }
+
+    private static void creditAccount(BigDecimal amount, ResultSet lockResultSet) throws SQLException {
+        if (lockResultSet.next()) {
+            BigDecimal bigDecimal = lockResultSet.getBigDecimal(2);
+            lockResultSet.updateBigDecimal(2, bigDecimal.add(amount));
+            lockResultSet.updateRow();
+        }
     }
 
     @SneakyThrows
-    private static PreparedStatement debitAccount(Connection connection, int accountId, BigDecimal amount) {
-        String debitAccount = "UPDATE account SET amount = amount + (?) WHERE id = (?)";
-        PreparedStatement debitStatement = connection.prepareStatement(debitAccount);
-        debitStatement.setBigDecimal(1, amount);
-        debitStatement.setInt(2, accountId);
-        return debitStatement;
-    }
-
-    @SneakyThrows
-    private static PreparedStatement creditAccount(Connection connection, int accountId, BigDecimal amount) {
-        String creditAccount = "UPDATE account SET amount = ? WHERE id = ?";
-        PreparedStatement creditStatement = connection.prepareStatement(creditAccount);
-        creditStatement.setBigDecimal(1, amount);
-        creditStatement.setInt(2, accountId);
-        return creditStatement;
+    private static ResultSet makeLockPreparedStatement(Connection connection, int accountId) {
+        String lockAccount = "SELECT id, amount FROM payments.account WHERE id = %d FOR UPDATE ";
+        Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+                ResultSet.CONCUR_UPDATABLE);
+        return statement.executeQuery(String.format(lockAccount, accountId));
     }
 }

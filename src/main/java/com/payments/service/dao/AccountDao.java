@@ -1,12 +1,15 @@
 package com.payments.service.dao;
 
 import com.payments.service.model.Account;
+import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.Optional;
 
+@Slf4j
 public class AccountDao {
     private final ConnectionManager connectionManager;
 
@@ -17,7 +20,7 @@ public class AccountDao {
 
     public int create(int customerId, BigDecimal amount) {
         var accountId = 0;
-        var createCustomerSql = "INSERT INTO account (customer, amount) VALUES(?, ?)";
+        var createCustomerSql = "INSERT INTO payments.account (customer, amount) VALUES(?, ?)";
         try (var connection = connectionManager.getConnection();
              var statement = connection.prepareStatement(createCustomerSql, Statement.RETURN_GENERATED_KEYS)) {
             statement.setInt(1, customerId);
@@ -31,13 +34,14 @@ public class AccountDao {
                 }
             }
         } catch (SQLException e) {
+            log.error("Got error during creating account. Exception message is '{}'", e.getMessage(), e);
             throw new RuntimeException(e);
         }
         return accountId;
     }
 
     public Optional<Account> findById(int id) {
-        final var createCustomerSql = "SELECT id, customer, amount from account WHERE account.id = ? ";
+        final var createCustomerSql = "SELECT id, customer, amount FROM payments.account WHERE account.id = ? ";
         try (var connection = connectionManager.getConnection();
              var statement = connection.prepareStatement(createCustomerSql)) {
             statement.setInt(1, id);
@@ -55,7 +59,7 @@ public class AccountDao {
     }
 
     public int deleteById(int id) {
-        final var createCustomerSql = "DELETE FROM account WHERE account.id = ? ";
+        final var createCustomerSql = "DELETE FROM payments.account WHERE account.id = ? ";
         try (var connection = connectionManager.getConnection();
              var statement = connection.prepareStatement(createCustomerSql)) {
             statement.setInt(1, id);

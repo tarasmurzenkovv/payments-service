@@ -23,9 +23,9 @@ dependencies {
     compile 'com.h2database:h2:1.4.200'
     compile 'org.hsqldb:sqltool:2.5.0'
     compile 'org.projectlombok:lombok:1.18.10'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.16'
-    annotationProcessor 'org.projectlombok:lombok:1.18.10'
+    compile 'com.google.inject:guice:4.2.2'
 
+    annotationProcessor 'org.projectlombok:lombok:1.18.10'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.10'
     testImplementation 'junit:junit:4.13'
     testImplementation 'com.squareup.okhttp:okhttp:2.7.5'

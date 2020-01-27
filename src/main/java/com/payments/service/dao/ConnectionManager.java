@@ -9,7 +9,9 @@ public class ConnectionManager {
 
     public Connection getConnection() {
         try {
-            return DriverManager.getConnection(DB_URL, USER, PASS);
+            Connection connection = DriverManager.getConnection(DB_URL, USER, PASS);
+            connection.setAutoCommit(true);
+            return connection;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

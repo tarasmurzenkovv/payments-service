@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+import static com.payments.service.model.Pair.of;
 import static java.lang.String.format;
 
 public class AccountsExistsValidation implements Consumer<Payment> {
@@ -21,7 +22,7 @@ public class AccountsExistsValidation implements Consumer<Payment> {
     @Override
     public void accept(Payment payment) {
         Stream.of(payment.getAccountFrom(), payment.getAccountTo())
-                .map(accountId -> Pair.of(accountId, accountDao.findById(accountId).isPresent()))
+                .map(accountId -> of(accountId, accountDao.findById(accountId).isPresent()))
                 .filter(pair -> !pair.getRight())
                 .findAny()
                 .map(Pair::getLeft)
